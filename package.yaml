@@ -11,13 +11,13 @@ extra-source-files:
   - CHANGELOG.md
 
 # Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
+synopsis: cached hashmap
+category: Cache
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description: Please see the README on GitHub at <https://github.com/poscat0x04/cache-polysemy#readme>
+description: An polysemy interface for cached hashmap and an interpreter implemented using <https://hackage.haskell.org/package/cache cache>
 
 dependencies:
   - base            >= 4.10    && < 5
