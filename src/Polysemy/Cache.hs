@@ -76,6 +76,7 @@ setDefaultExpiration :: forall k v r. (Eq k, Hashable k, Member (Cache k v) r) =
 
 -- | Run a 'Cache' using 'AtomicState'
 runCacheAtomicState ::
+  forall k v r a.
   Members '[Embed IO, AtomicState (C.Cache k v)] r =>
   Sem (Cache k v ': r) a ->
   Sem r a
@@ -119,6 +120,7 @@ runCacheAtomicState = interpret $ \case
 
 -- | Run a 'Cache', given a default expiration time.
 runCache ::
+  forall k v r a.
   Members '[Embed IO] r =>
   Maybe TimeSpec ->
   Sem (Cache k v ': AtomicState (C.Cache k v) ': r) a ->
