@@ -118,6 +118,50 @@ runCacheAtomicState = interpret $ \case
     cache <- atomicGet
     atomicPut $ C.setDefaultExpiration cache ts
 
+-- | Alternative version of 'runCacheAtomicState' that uses 'Final' instead of 'Embed'
+runCacheAtomicState' ::
+  forall k v r a.
+  Members '[Final IO, AtomicState (C.Cache k v)] r =>
+  Sem (Cache k v ': r) a ->
+  Sem r a
+runCacheAtomicState' = interpret $ \case
+  Insert k v -> do
+    cache <- atomicGet
+    embedFinal $ C.insert cache k v
+  Insert' ts k v -> do
+    cache <- atomicGet
+    embedFinal $ C.insert' cache ts k v
+  Lookup k -> do
+    cache <- atomicGet
+    embedFinal $ C.lookup cache k
+  Lookup' k -> do
+    cache <- atomicGet
+    embedFinal $ C.lookup cache k
+  Keys -> do
+    cache <- atomicGet
+    embedFinal $ C.keys cache
+  Delete k -> do
+    cache <- atomicGet
+    embedFinal $ C.delete cache k
+  FilterWithKey pred -> do
+    cache <- atomicGet
+    embedFinal $ C.filterWithKey pred cache
+  Purge -> do
+    cache <- atomicGet
+    embedFinal $ C.purge cache
+  PurgeExpired -> do
+    cache <- atomicGet
+    embedFinal $ C.purgeExpired cache
+  Size -> do
+    cache <- atomicGet
+    embedFinal $ C.size cache
+  DefaultExipration -> do
+    cache <- atomicGet
+    pure $ C.defaultExpiration cache
+  SetDefaultExpiration ts -> do
+    cache <- atomicGet
+    atomicPut $ C.setDefaultExpiration cache ts
+
 -- | Run a 'Cache', given a default expiration time.
 runCache ::
   forall k v r a.
@@ -131,3 +175,18 @@ runCache ts eff = do
   eff
     & runCacheAtomicState
     & runAtomicStateIORef ref
+
+-- | Alternative version of 'runCache' that uses 'Final' instead of 'Embed'
+runCache' ::
+  forall k v r a.
+  Members '[Final IO] r =>
+  Maybe TimeSpec ->
+  Sem (Cache k v ': AtomicState (C.Cache k v) ': Embed IO ': r) a ->
+  Sem r a
+runCache' ts eff = do
+  cache <- embedFinal $ C.newCache ts
+  ref <- embedFinal $ newIORef cache
+  eff
+    & runCacheAtomicState
+    & runAtomicStateIORef ref
+    & embedToFinal
