@@ -1,0 +1,39 @@
+name: build
+on: [push, pull_request]
+
+jobs:
+  build-stack:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        resolver:
+          - lts-18.6
+          - lts-18.8
+          - lts-18.13
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+    name: Stack resolver ${{ matrix.resolver }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup stack
+        uses: haskell/actions/setup@v1
+        with:
+          enable-stack: true
+      - run: stack build --resolver ${{ matrix.resolver }}
+  build-cabal:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        ghc:
+          - "8.8.4"
+          - "8.10.7"
+          - "9.0.1"
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+    name: Haskell GHC version ${{ matrix.ghc }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup stack
+        uses: haskell/actions/setup@v1
+        with:
+          ghc-version: ${{ matrix.ghc }}
+      - run: cabal build
+
