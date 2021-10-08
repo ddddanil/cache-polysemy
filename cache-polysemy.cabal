@@ -1,0 +1,87 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           cache-polysemy
+version:        0.1.2
+synopsis:       cached hashmaps
+description:    An polysemy interface for cached hashmaps and an interpreter implemented using <https://hackage.haskell.org/package/cache cache>
+category:       Cache
+homepage:       https://github.com/poscat0x04/cache-polysemy#readme
+bug-reports:    https://github.com/poscat0x04/cache-polysemy/issues
+author:         Poscat
+maintainer:     poscat@mail.poscat.moe
+copyright:      (c) 2020 Poscat
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/poscat0x04/cache-polysemy
+
+common options
+  default-language: Haskell2010
+  ghc-options: -fplugin=Polysemy.Plugin
+  default-extensions:
+      OverloadedStrings
+    , FlexibleInstances
+    , FlexibleContexts
+    , FunctionalDependencies
+    , ConstraintKinds
+    , DeriveGeneric
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , TypeOperators
+    , TypeApplications
+    , TypeFamilies
+    , KindSignatures
+    , PartialTypeSignatures
+    , DataKinds
+    , StarIsType
+    , ScopedTypeVariables
+    , ExplicitForAll
+    , ViewPatterns
+    , BangPatterns
+    , LambdaCase
+    , TupleSections
+    , EmptyCase
+    , MultiWayIf
+    , UnicodeSyntax
+    , PatternSynonyms
+    , RecordWildCards
+    , RankNTypes
+  build-depends:
+      base
+    , cache
+    , clock
+    , hashable
+    , polysemy
+    , polysemy-plugin
+
+library
+  import: options 
+  exposed-modules:
+      Polysemy.Cache
+  other-modules:
+      Paths_cache_polysemy
+  hs-source-dirs:
+      src
+
+test-suite cache-polysemy-test
+  import: options 
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_cache_polysemy
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      cache-polysemy

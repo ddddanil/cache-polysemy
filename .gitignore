@@ -23,7 +23,3 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 build
-
-# favors hpack over plain cabal
-*.cabal
-
